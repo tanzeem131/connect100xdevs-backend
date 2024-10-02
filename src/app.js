@@ -6,6 +6,7 @@ const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { UserAuth } = require("./middlewares/auth");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -61,18 +62,9 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/profile", async (req, res) => {
+app.get("/profile", UserAuth, async (req, res) => {
   try {
-    const cookies = req.cookies;
-    const { token } = cookies;
-    if (!token) {
-      throw new Error("Invalid token");
-    }
-    const decodedMessage = await jwt.verify(token, "tanzeem@ss");
-
-    const { _id } = decodedMessage;
-
-    const user = await User.findById(_id);
+    const { user } = req;
     if (!user) {
       throw new Error("User does not exist");
     }
