@@ -13,11 +13,9 @@ const USER_SAFE_DATA = [
   "skills",
   "photoUrl",
 ];
-
 userRouter.get("/user/requests/received", UserAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
-
     const connectionRequest = await ConnectionRequest.find({
       toUserId: loggedInUser._id,
       status: "interested",
@@ -25,10 +23,7 @@ userRouter.get("/user/requests/received", UserAuth, async (req, res) => {
     if (!connectionRequest) {
       return res.status(404).json({ message: "Connection request not found" });
     }
-
-    const data = connectionRequest.map((row) => row.fromUserId);
-
-    res.json({ message: "Data fetched successfully ", data });
+    res.json({ message: "Data fetched successfully ", connectionRequest });
   } catch (err) {
     res.status(400).send("Error " + err.message);
   }

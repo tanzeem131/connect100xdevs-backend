@@ -36,17 +36,17 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      validate(value) {
-        if (!["male", "female", "other"].includes(value)) {
-          throw new Error("Gender is not defined");
-        }
+      enum: {
+        values: ["male", "female", "other"],
+        message: `{VALUE} is not a valid gender type`,
       },
     },
     photoUrl: {
       type: String,
+      default: "https://geographyandyou.com/images/user-profile.png",
       validate(value) {
-        if (!validator.isDataURI(value)) {
-          throw new Error("photoUrl is invalid" + err.message);
+        if (!validator.isURL(value)) {
+          throw new Error("Invalid Photo URL: " + value);
         }
       },
     },

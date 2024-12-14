@@ -10,8 +10,7 @@ requestRouter.post(
   async (req, res) => {
     try {
       const fromUserId = req.user._id;
-      const toUserId = req.params.toUserId;
-      const status = req.params.status;
+      const { status, toUserId } = req.params;
       const allowedStatus = ["interested", "ignored"];
       if (!allowedStatus.includes(status)) {
         throw new Error("Invalid request");
@@ -41,7 +40,6 @@ requestRouter.post(
         status,
       });
       const data = await connectionRequest.save();
-
       const sendMessage =
         status === "ignored"
           ? `${req.user.firstName} ignored ${toUser.firstName}`
@@ -68,6 +66,7 @@ requestRouter.post(
       if (!isAllowedStatus.includes(status)) {
         return res.status(400).json({ message: "Status not allowed" });
       }
+      console.log("Looking for connection request with ID:", requestId);
       const connectionRequest = await ConnectionRequest.findOne({
         _id: requestId,
         toUserId: loggedInUser._id,
