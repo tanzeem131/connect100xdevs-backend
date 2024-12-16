@@ -66,7 +66,6 @@ requestRouter.post(
       if (!isAllowedStatus.includes(status)) {
         return res.status(400).json({ message: "Status not allowed" });
       }
-      console.log("Looking for connection request with ID:", requestId);
       const connectionRequest = await ConnectionRequest.findOne({
         _id: requestId,
         toUserId: loggedInUser._id,

@@ -9,10 +9,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 2,
-      maxlength: 50,
+      maxlength: 30,
     },
     lastName: {
       type: String,
+      minlength: 2,
+      maxlength: 30,
     },
     emailId: {
       type: String,
@@ -20,6 +22,7 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      maxlength: 40,
       validate(value) {
         if (!validator.isEmail(value)) {
           throw new Error("Email id is invalid");
@@ -33,9 +36,12 @@ const userSchema = new mongoose.Schema(
     age: {
       type: Number,
       min: 18,
+      max: 80,
     },
     gender: {
       type: String,
+      trim: true,
+      lowercase: true,
       enum: {
         values: ["male", "female", "other"],
         message: `{VALUE} is not a valid gender type`,
@@ -49,13 +55,24 @@ const userSchema = new mongoose.Schema(
           throw new Error("Invalid Photo URL: " + value);
         }
       },
+      maxlength: 500,
     },
     about: {
       type: String,
-      default: "This is the default about",
+      default: "Even I don't know about me",
+      maxlength: 200,
     },
     skills: {
       type: [String],
+      validate: {
+        validator: function (skills) {
+          return (
+            skills.length <= 10 && skills.every((skill) => skill.length <= 50)
+          );
+        },
+        message:
+          "You can only specify up to 10 skills, each up to 50 characters long.",
+      },
     },
   },
   {
