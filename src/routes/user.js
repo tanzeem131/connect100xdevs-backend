@@ -11,6 +11,7 @@ const USER_SAFE_DATA = [
   "age",
   "about",
   "skills",
+  "githubUsername",
   "photoUrl",
 ];
 userRouter.get("/user/requests/received", UserAuth, async (req, res) => {

@@ -28,11 +28,10 @@ app.use("/", userRouter);
 
 connectDB()
   .then(() => {
-    console.log("Database connection established");
     app.listen(PORT, () => {
       console.log(`server is running on port:${PORT}`);
     });
   })
   .catch((err) => {
-    console.log("Database connection not established" + err.message);
+    console.error("Database connection not established");
   });

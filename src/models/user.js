@@ -29,6 +29,13 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
+    githubUsername: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      maxlength: 30,
+    },
     password: {
       type: String,
       required: true,
@@ -41,7 +48,6 @@ const userSchema = new mongoose.Schema(
     gender: {
       type: String,
       trim: true,
-      lowercase: true,
       enum: {
         values: ["male", "female", "other"],
         message: `{VALUE} is not a valid gender type`,

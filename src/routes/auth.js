@@ -3,33 +3,60 @@ const User = require("../models/user");
 const express = require("express");
 const authRouter = express.Router();
 const { validateSignUpData } = require("../utils/validation");
+const { getCommitCountForYearGraphQL } = require("../utils/validation");
 
-authRouter.post("/signup", async (req, res) => {
+authRouter.post("/signup", async (req, res, next) => {
   try {
-    //Validation of data
     validateSignUpData(req);
 
-    const { firstName, lastName, emailId, password } = req.body;
+    const { firstName, lastName, emailId, githubUsername, password } = req.body;
 
-    //Encrypt the password
+    if (!githubUsername) {
+      throw new Error("GitHub username is required.");
+    }
+
+    const currentYear = 2024;
+    const totalCommits = await getCommitCountForYearGraphQL(
+      githubUsername,
+      currentYear
+    );
+
+    if (!totalCommits && totalCommits !== 0) {
+      throw new Error(
+        "Unable to fetch commit data from GitHub. Please try again."
+      );
+    }
+
+    if (totalCommits <= 50) {
+      throw new Error(
+        `GitHub account does not meet the required minimum of 50 commits. Current commits: ${totalCommits}`
+      );
+    }
+
     const passwordHash = await bcrypt.hash(password, 10);
 
-    //Creating a new instance of the User model
     const user = new User({
       firstName,
       lastName,
       emailId,
+      githubUsername,
       password: passwordHash,
     });
 
     const savedUser = await user.save();
     const token = await savedUser.getJWT();
+
     res.cookie("token", token, {
       expires: new Date(Date.now() + 8 * 3600000),
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
     });
-    res.json({ message: "User Added successfully!", data: savedUser });
+
+    res
+      .status(201)
+      .json({ message: "User added successfully!", data: savedUser });
   } catch (err) {
-    res.status(400).send("Error : " + err.message);
+    next(err);
   }
 });
 
