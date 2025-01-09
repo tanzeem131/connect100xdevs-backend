@@ -1,6 +1,5 @@
 const validator = require("validator");
 const axios = require("axios");
-require("dotenv").config();
 
 const validateSignUpData = (req) => {
   const { firstName, lastName, emailId, password } = req.body;
