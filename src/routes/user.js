@@ -90,4 +90,22 @@ userRouter.get("/user/feed", UserAuth, async (req, res) => {
   }
 });
 
+userRouter.delete("/user/delete-account", UserAuth, async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    await ConnectionRequest.deleteMany({
+      $or: [{ fromUserId: userId }, { toUserId: userId }],
+    });
+
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({ message: "Account deleted successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error deleting account: " + error.message });
+  }
+});
+
 module.exports = userRouter;
