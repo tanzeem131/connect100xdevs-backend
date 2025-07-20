@@ -3,6 +3,8 @@ const { connectDB } = require("./config/database");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const http = require("http");
+const initializeSocket = require("./utils/socket");
 require("dotenv").config();
 let { PORT } = process.env;
 
@@ -15,6 +17,10 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
+
+const server = http.createServer(app);
+
+initializeSocket(server);
 
 const authRouter = require("./routes/auth");
 const enquiryRouter = require("./routes/enquiry");
@@ -30,7 +36,7 @@ app.use("/", userRouter);
 
 connectDB()
   .then(() => {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`server is running on port:${PORT}`);
     });
   })
