@@ -21,33 +21,38 @@ const initializeSocket = (server) => {
       socket.join(roomId);
     });
 
-    socket.on("sendMessage", async ({ userId, targetUserId, newMessage }) => {
-      try {
-        const roomId = getSecretRoomId(userId, targetUserId);
-        let chat = await Chat.findOne({
-          participants: { $all: [userId, targetUserId] },
-        });
-        if (!chat) {
-          chat = new Chat({
-            participants: [userId, targetUserId],
-            message: [],
+    socket.on(
+      "sendMessage",
+      async ({ userId, targetUserId, optimizedMessage }) => {
+        try {
+          const roomId = getSecretRoomId(userId, targetUserId);
+          let chat = await Chat.findOne({
+            participants: { $all: [userId, targetUserId] },
           });
+          if (!chat) {
+            chat = new Chat({
+              participants: [userId, targetUserId],
+              message: [],
+            });
+          }
+
+          chat.message.push({
+            senderId: userId,
+            text: optimizedMessage,
+          });
+
+          await chat.save();
+
+          io.to(roomId).emit("messageReceived", {
+            text: optimizedMessage,
+            createdAt: new Date(),
+            senderId: userId,
+          });
+        } catch (error) {
+          console.log(error);
         }
-
-        chat.message.push({
-          senderId: userId,
-          text: newMessage,
-        });
-
-        await chat.save();
-
-        io.to(roomId).emit("messageReceived", {
-          newMessage,
-        });
-      } catch (error) {
-        console.log(error);
       }
-    });
+    );
 
     socket.on("disconnect", () => {});
   });
