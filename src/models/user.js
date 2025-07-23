@@ -8,11 +8,13 @@ const userSchema = new mongoose.Schema(
     firstName: {
       type: String,
       required: true,
+      trim: true,
       minlength: 2,
       maxlength: 30,
     },
     lastName: {
       type: String,
+      trim: true,
       minlength: 2,
       maxlength: 30,
     },
@@ -73,11 +75,11 @@ const userSchema = new mongoose.Schema(
       validate: {
         validator: function (skills) {
           return (
-            skills.length <= 10 && skills.every((skill) => skill.length <= 50)
+            skills.length <= 5 && skills.every((skill) => skill.length <= 50)
           );
         },
         message:
-          "You can only specify up to 10 skills, each up to 50 characters long.",
+          "You can only specify up to 5 skills, each up to 50 characters long.",
       },
     },
   },

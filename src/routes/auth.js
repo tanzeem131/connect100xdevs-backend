@@ -3,7 +3,7 @@ const User = require("../models/user");
 const express = require("express");
 const authRouter = express.Router();
 const { validateSignUpData } = require("../utils/validation");
-const { getCommitCountForYearGraphQL } = require("../utils/validation");
+// const { getCommitCountForYearGraphQL } = require("../utils/validation");
 
 authRouter.post("/signup", async (req, res, next) => {
   try {
@@ -15,23 +15,23 @@ authRouter.post("/signup", async (req, res, next) => {
       throw new Error("GitHub username is required.");
     }
 
-    const currentYear = 2024;
-    const totalCommits = await getCommitCountForYearGraphQL(
-      githubUsername,
-      currentYear
-    );
+    // const currentYear = 2024;
+    // const totalCommits = await getCommitCountForYearGraphQL(
+    //   githubUsername,
+    //   currentYear
+    // );
 
-    if (!totalCommits && totalCommits !== 0) {
-      throw new Error(
-        "Unable to fetch commit data from GitHub. Please try again."
-      );
-    }
+    // if (!totalCommits && totalCommits !== 0) {
+    //   throw new Error(
+    //     "Unable to fetch commit data from GitHub. Please try again."
+    //   );
+    // }
 
-    if (totalCommits <= 50) {
-      throw new Error(
-        `GitHub account does not meet the required minimum of 50 commits. Current commits: ${totalCommits}`
-      );
-    }
+    // if (totalCommits <= 50) {
+    //   throw new Error(
+    //     `GitHub account does not meet the required minimum of 50 commits. Current commits: ${totalCommits}`
+    //   );
+    // }
 
     const passwordHash = await bcrypt.hash(password, 10);
 
@@ -56,7 +56,6 @@ authRouter.post("/signup", async (req, res, next) => {
       .status(201)
       .json({ message: "User added successfully!", data: savedUser });
   } catch (err) {
-    // next(err);
     res.status(400).json({ error: err.message });
   }
 });

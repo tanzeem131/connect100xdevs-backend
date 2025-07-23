@@ -1,6 +1,7 @@
 const socket = require("socket.io");
 const crypto = require("crypto");
 const Chat = require("../models/chat");
+const ConnectionRequest = require("../models/connectionRequest");
 
 const getSecretRoomId = (userId, targetUserId) => {
   return crypto
@@ -26,22 +27,38 @@ const initializeSocket = (server) => {
       async ({ userId, targetUserId, optimizedMessage }) => {
         try {
           const roomId = getSecretRoomId(userId, targetUserId);
-          let chat = await Chat.findOne({
-            participants: { $all: [userId, targetUserId] },
+          const checkStatus = await ConnectionRequest.findOne({
+            $or: [
+              {
+                toUserId: userId,
+                fromUserId: targetUserId,
+                status: "accepted",
+              },
+              {
+                toUserId: targetUserId,
+                fromUserId: userId,
+                status: "accepted",
+              },
+            ],
           });
-          if (!chat) {
-            chat = new Chat({
-              participants: [userId, targetUserId],
-              message: [],
+          if (checkStatus) {
+            let chat = await Chat.findOne({
+              participants: { $all: [userId, targetUserId] },
             });
+            if (!chat) {
+              chat = new Chat({
+                participants: [userId, targetUserId],
+                message: [],
+              });
+            }
+
+            chat.message.push({
+              senderId: userId,
+              text: optimizedMessage,
+            });
+
+            await chat.save();
           }
-
-          chat.message.push({
-            senderId: userId,
-            text: optimizedMessage,
-          });
-
-          await chat.save();
 
           io.to(roomId).emit("messageReceived", {
             text: optimizedMessage,
