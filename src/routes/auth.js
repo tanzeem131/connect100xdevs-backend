@@ -227,7 +227,11 @@ authRouter.get("/github/callback", async (req, res) => {
     });
 
     // 7. Redirect to frontend
-    res.redirect("http://localhost:5173");
+    if (process.env.NODE_ENV === "production") {
+      res.redirect(process.env.CLIENT_URL);
+    } else {
+      res.redirect("http://localhost:5173");
+    }
   } catch (error) {
     console.error(
       "GitHub auth error:",
