@@ -6,11 +6,14 @@ const cors = require("cors");
 const http = require("http");
 const initializeSocket = require("./utils/socket");
 require("dotenv").config();
-let { PORT } = process.env;
+let { PORT, CLIENT_URL } = process.env;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin:
+      process.env.NODE_ENV === "production"
+        ? CLIENT_URL
+        : "http://localhost:5173",
     credentials: true,
   })
 );
