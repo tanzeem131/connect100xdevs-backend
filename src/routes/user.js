@@ -1,6 +1,7 @@
 const express = require("express");
 const { UserAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
+const Chat = require("../models/chat");
 const User = require("../models/user");
 const userRouter = express.Router();
 
@@ -96,6 +97,10 @@ userRouter.delete("/user/delete-account", UserAuth, async (req, res) => {
 
     await ConnectionRequest.deleteMany({
       $or: [{ fromUserId: userId }, { toUserId: userId }],
+    });
+
+    await Chat.deleteMany({
+      participants: userId,
     });
 
     await User.findByIdAndDelete(userId);
