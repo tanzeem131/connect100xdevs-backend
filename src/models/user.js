@@ -184,7 +184,7 @@ const userSchema = new mongoose.Schema(
       validate: {
         validator: function (skills) {
           return (
-            skills.length <= 5 && skills.every((skill) => skill.length <= 50)
+            skills.length <= 30 && skills.every((skill) => skill.length <= 50)
           );
         },
         message:
