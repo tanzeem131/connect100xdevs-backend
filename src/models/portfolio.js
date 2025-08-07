@@ -24,6 +24,13 @@ const socialSchema = new mongoose.Schema(
       minlength: 2,
       maxlength: 100,
     },
+    leetcode: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 100,
+    },
   },
   { _id: false }
 );
@@ -72,7 +79,18 @@ const projectSchema = new mongoose.Schema(
       minlength: 2,
       maxlength: 1000,
     },
-    tech: [String],
+    tech: {
+      type: [String],
+      validate: {
+        validator: function (skills) {
+          return (
+            skills.length <= 30 && skills.every((skill) => skill.length <= 50)
+          );
+        },
+        message:
+          "You can only specify up to 5 skills, each up to 50 characters long.",
+      },
+    },
     codelink: {
       type: String,
       required: true,
@@ -84,6 +102,34 @@ const projectSchema = new mongoose.Schema(
       maxlength: 400,
     },
     livelink: {
+      type: String,
+      required: true,
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw new Error("Invalid Photo URL: " + value);
+        }
+      },
+      maxlength: 400,
+    },
+  },
+  { _id: false }
+);
+
+const articleSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      trim: true,
+      minlength: 2,
+      maxlength: 300,
+    },
+    owner: {
+      type: String,
+      trim: true,
+      minlength: 2,
+      maxlength: 200,
+    },
+    link: {
       type: String,
       required: true,
       validate(value) {
@@ -116,6 +162,19 @@ const portfolioSchema = new mongoose.Schema(
       trim: true,
       minlength: 2,
       maxlength: 200,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      maxlength: 40,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Email id is invalid");
+        }
+      },
     },
     title: {
       type: String,
@@ -160,10 +219,34 @@ const portfolioSchema = new mongoose.Schema(
       maxlength: 300,
     },
     socials: socialSchema,
-    techStack: [String],
+    techStack: {
+      type: [String],
+      validate: {
+        validator: function (skills) {
+          return (
+            skills.length <= 30 && skills.every((skill) => skill.length <= 50)
+          );
+        },
+        message:
+          "You can only specify up to 5 skills, each up to 50 characters long.",
+      },
+    },
+    currentlyExploring: {
+      type: [String],
+      validate: {
+        validator: function (skills) {
+          return (
+            skills.length <= 30 && skills.every((skill) => skill.length <= 50)
+          );
+        },
+        message:
+          "You can only specify up to 5 skills, each up to 50 characters long.",
+      },
+    },
     experience: [experienceSchema],
     keyAchievements: [String],
     projects: [projectSchema],
+    articles: [articleSchema],
   },
   { timestamps: true }
 );
