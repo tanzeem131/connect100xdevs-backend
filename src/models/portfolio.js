@@ -35,7 +35,7 @@ const socialSchema = new mongoose.Schema(
   { _id: false }
 );
 
-const experienceSchema = new mongoose.mongoose.Schema(
+const experienceSchema = new mongoose.Schema(
   {
     role: {
       type: String,

@@ -1,7 +1,7 @@
 const express = require("express");
 const { UserAuth } = require("../middlewares/auth");
 const User = require("../models/user");
-const Portfolio = require("../models/Portfolio");
+const Portfolio = require("../models/portfolio");
 const portfolioRouter = express.Router();
 
 portfolioRouter.post("/portfolio/save", UserAuth, async (req, res) => {

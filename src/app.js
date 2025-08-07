@@ -32,6 +32,7 @@ const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
 const chatRouter = require("./routes/chat");
 const portfolioRouter = require("./routes/portfolio");
+const githubRouter = require("./routes/github");
 
 app.use("/", authRouter);
 app.use("/", enquiryRouter);
@@ -40,6 +41,7 @@ app.use("/", requestRouter);
 app.use("/", userRouter);
 app.use("/", chatRouter);
 app.use("/", portfolioRouter);
+app.use("/", githubRouter);
 
 connectDB()
   .then(() => {
