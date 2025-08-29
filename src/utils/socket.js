@@ -18,7 +18,6 @@ const initializeSocket = (server) => {
   io.on("connection", (socket) => {
     socket.on("joinChat", ({ userId, targetUserId }) => {
       const roomId = getSecretRoomId(userId, targetUserId);
-      console.log("joining room with id: ", roomId);
       socket.join(roomId);
     });
 

@@ -33,6 +33,7 @@ const userRouter = require("./routes/user");
 const chatRouter = require("./routes/chat");
 const portfolioRouter = require("./routes/portfolio");
 const githubRouter = require("./routes/github");
+const resumeParserRouter = require("./routes/resumeParser");
 
 app.use("/", authRouter);
 app.use("/", enquiryRouter);
@@ -42,6 +43,7 @@ app.use("/", userRouter);
 app.use("/", chatRouter);
 app.use("/", portfolioRouter);
 app.use("/", githubRouter);
+app.use("/", resumeParserRouter);
 
 connectDB()
   .then(() => {

@@ -9,6 +9,10 @@ portfolioRouter.post("/portfolio/save", UserAuth, async (req, res) => {
     const userId = req.user._id;
     const portfolioData = req.body;
 
+    if (portfolioData.socials) {
+      portfolioData.socials.github = req.user.githubUsername;
+    }
+
     const updatedPortfolio = await Portfolio.findOneAndUpdate(
       { user: userId },
       { ...portfolioData, user: userId, slug: req.user.githubUsername },

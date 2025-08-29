@@ -120,21 +120,21 @@ const articleSchema = new mongoose.Schema(
     title: {
       type: String,
       trim: true,
-      minlength: 2,
+      required: false,
       maxlength: 300,
     },
     owner: {
       type: String,
       trim: true,
-      minlength: 2,
+      required: false,
       maxlength: 200,
     },
     link: {
       type: String,
-      required: true,
+      required: false,
       validate(value) {
         if (!validator.isURL(value)) {
-          throw new Error("Invalid Photo URL: " + value);
+          throw new Error("Invalid Link: " + value);
         }
       },
       maxlength: 400,
@@ -224,11 +224,11 @@ const portfolioSchema = new mongoose.Schema(
       validate: {
         validator: function (skills) {
           return (
-            skills.length <= 30 && skills.every((skill) => skill.length <= 50)
+            skills.length <= 50 && skills.every((skill) => skill.length <= 50)
           );
         },
         message:
-          "You can only specify up to 5 skills, each up to 50 characters long.",
+          "You can only specify up to 50 skills, each up to 50 characters long.",
       },
     },
     currentlyExploring: {
