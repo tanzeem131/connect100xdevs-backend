@@ -2,33 +2,39 @@ const express = require("express");
 const { UserAuth } = require("../middlewares/auth");
 const User = require("../models/user");
 const Portfolio = require("../models/portfolioDetails");
+const { portfolioSaveLimiter } = require("../middlewares/rateLimiter");
 const portfolioRouter = express.Router();
 
-portfolioRouter.post("/portfolio/save", UserAuth, async (req, res) => {
-  try {
-    const userId = req.user._id;
-    const portfolioData = req.body;
+portfolioRouter.post(
+  "/portfolio/save",
+  UserAuth,
+  portfolioSaveLimiter,
+  async (req, res) => {
+    try {
+      const userId = req.user._id;
+      const portfolioData = req.body;
 
-    if (portfolioData.socials) {
-      portfolioData.socials.github = req.user.githubUsername;
+      if (portfolioData.socials) {
+        portfolioData.socials.github = req.user.githubUsername;
+      }
+
+      const updatedPortfolio = await Portfolio.findOneAndUpdate(
+        { user: userId },
+        { ...portfolioData, user: userId, slug: req.user.githubUsername },
+        { new: true, upsert: true, runValidators: true }
+      );
+
+      res.status(200).json({
+        message: "Portfolio saved successfully!",
+        portfolio: updatedPortfolio,
+      });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Error saving portfolio: " + error.message });
     }
-
-    const updatedPortfolio = await Portfolio.findOneAndUpdate(
-      { user: userId },
-      { ...portfolioData, user: userId, slug: req.user.githubUsername },
-      { new: true, upsert: true, runValidators: true }
-    );
-
-    res.status(200).json({
-      message: "Portfolio saved successfully!",
-      portfolio: updatedPortfolio,
-    });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error saving portfolio: " + error.message });
   }
-});
+);
 
 portfolioRouter.get("/portfolio/:githubUsername", async (req, res) => {
   try {

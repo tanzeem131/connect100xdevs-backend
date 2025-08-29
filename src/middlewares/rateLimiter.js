@@ -54,7 +54,37 @@ const profileSaveLimiter = rateLimit({
   skipSuccessfulRequests: false,
 });
 
+const portfolioSaveLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 5,
+
+  keyGenerator: (req) => {
+    return `user:${req.user.id}`;
+  },
+
+  message: {
+    error: "Too many requests",
+    message: "Please try again after 5 minutes",
+    retryAfter: 5 * 60,
+  },
+
+  standardHeaders: true,
+  legacyHeaders: false,
+
+  handler: (req, res) => {
+    res.status(429).json({
+      error: "Rate limit exceeded",
+      message: "Too many requests. Please try again after 5 minutes.",
+      retryAfter: Math.round(req.rateLimit.resetTime / 1000),
+    });
+  },
+
+  skipFailedRequests: true,
+  skipSuccessfulRequests: false,
+});
+
 module.exports = {
   resumeParcerLimiter,
   profileSaveLimiter,
+  portfolioSaveLimiter,
 };
