@@ -38,7 +38,7 @@ JSON
       "description": ""
     }
   ],
-  "keyAchievements": [],
+  "keyAchievements": [""],
   "projects": [
     {
       "title": "",

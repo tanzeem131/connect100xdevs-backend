@@ -12,7 +12,6 @@ const socialSchema = new mongoose.Schema(
     },
     twitter: {
       type: String,
-      required: true,
       trim: true,
       minlength: 2,
       maxlength: 100,
@@ -26,7 +25,6 @@ const socialSchema = new mongoose.Schema(
     },
     leetcode: {
       type: String,
-      required: true,
       trim: true,
       minlength: 2,
       maxlength: 100,
@@ -88,15 +86,16 @@ const projectSchema = new mongoose.Schema(
           );
         },
         message:
-          "You can only specify up to 5 skills, each up to 50 characters long.",
+          "You can only specify up to 30 skills, each up to 50 characters long.",
       },
     },
     codelink: {
       type: String,
       required: true,
+      trim: true,
       validate(value) {
         if (!validator.isURL(value)) {
-          throw new Error("Invalid Photo URL: " + value);
+          throw new Error("Invalid codelink URL: " + value);
         }
       },
       maxlength: 400,
@@ -104,9 +103,10 @@ const projectSchema = new mongoose.Schema(
     livelink: {
       type: String,
       required: true,
+      trim: true,
       validate(value) {
         if (!validator.isURL(value)) {
-          throw new Error("Invalid Photo URL: " + value);
+          throw new Error("Invalid livelink URL: " + value);
         }
       },
       maxlength: 400,
@@ -132,6 +132,7 @@ const articleSchema = new mongoose.Schema(
     link: {
       type: String,
       required: false,
+      trim: true,
       validate(value) {
         if (!validator.isURL(value)) {
           throw new Error("Invalid Link: " + value);
@@ -186,6 +187,7 @@ const portfolioSchema = new mongoose.Schema(
     profilepic: {
       type: String,
       required: true,
+      trim: true,
       validate(value) {
         if (!validator.isURL(value)) {
           throw new Error("Invalid Photo URL: " + value);

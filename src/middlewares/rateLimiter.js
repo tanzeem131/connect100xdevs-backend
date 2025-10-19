@@ -83,8 +83,15 @@ const portfolioSaveLimiter = rateLimit({
   skipSuccessfulRequests: false,
 });
 
+const githubLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 50, // 50 requests per 10 minutes per IP
+  message: { error: "Too many requests, please try again later." },
+});
+
 module.exports = {
   resumeParcerLimiter,
   profileSaveLimiter,
   portfolioSaveLimiter,
+  githubLimiter,
 };
