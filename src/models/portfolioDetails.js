@@ -13,20 +13,17 @@ const socialSchema = new mongoose.Schema(
     twitter: {
       type: String,
       trim: true,
-      minlength: 2,
       maxlength: 100,
     },
     linkedin: {
       type: String,
       required: true,
       trim: true,
-      minlength: 2,
       maxlength: 100,
     },
     leetcode: {
       type: String,
       trim: true,
-      minlength: 2,
       maxlength: 100,
     },
   },
@@ -38,25 +35,21 @@ const experienceSchema = new mongoose.Schema(
     role: {
       type: String,
       trim: true,
-      minlength: 2,
       maxlength: 200,
     },
     company: {
       type: String,
       trim: true,
-      minlength: 2,
       maxlength: 200,
     },
     period: {
       type: String,
       trim: true,
-      minlength: 2,
       maxlength: 100,
     },
     description: {
       type: String,
       trim: true,
-      minlength: 2,
       maxlength: 1000,
     },
   },
@@ -68,13 +61,11 @@ const projectSchema = new mongoose.Schema(
     title: {
       type: String,
       trim: true,
-      minlength: 2,
       maxlength: 100,
     },
     description: {
       type: String,
       trim: true,
-      minlength: 2,
       maxlength: 1000,
     },
     tech: {
