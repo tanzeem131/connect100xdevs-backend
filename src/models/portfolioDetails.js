@@ -96,8 +96,8 @@ const projectSchema = new mongoose.Schema(
       required: true,
       trim: true,
       validate(value) {
-        if (!validator.isURL(value)) {
-          throw new Error("Invalid livelink URL: " + value);
+        if (value && !validator.isURL(value)) {
+          throw new Error("Invalid livelink URL:" + value);
         }
       },
       maxlength: 400,
@@ -111,21 +111,18 @@ const articleSchema = new mongoose.Schema(
     title: {
       type: String,
       trim: true,
-      required: false,
       maxlength: 300,
     },
     owner: {
       type: String,
       trim: true,
-      required: false,
       maxlength: 200,
     },
     link: {
       type: String,
-      required: false,
       trim: true,
       validate(value) {
-        if (!validator.isURL(value)) {
+        if (value && !validator.isURL(value)) {
           throw new Error("Invalid Link: " + value);
         }
       },
@@ -163,8 +160,8 @@ const portfolioSchema = new mongoose.Schema(
       trim: true,
       maxlength: 40,
       validate(value) {
-        if (!validator.isEmail(value)) {
-          throw new Error("Email id is invalid");
+        if (value && !validator.isEmail(value)) {
+          throw new Error("Email id is invalid" + value);
         }
       },
     },
@@ -180,7 +177,7 @@ const portfolioSchema = new mongoose.Schema(
       required: true,
       trim: true,
       validate(value) {
-        if (!validator.isURL(value)) {
+        if (value && !validator.isURL(value)) {
           throw new Error("Invalid Photo URL: " + value);
         }
       },
@@ -216,6 +213,7 @@ const portfolioSchema = new mongoose.Schema(
       type: [String],
       validate: {
         validator: function (skills) {
+          if (!skills || skills.length === 0) return true;
           return (
             skills.length <= 50 && skills.every((skill) => skill.length <= 50)
           );
@@ -228,12 +226,13 @@ const portfolioSchema = new mongoose.Schema(
       type: [String],
       validate: {
         validator: function (skills) {
+          if (!skills || skills.length === 0) return true;
           return (
             skills.length <= 30 && skills.every((skill) => skill.length <= 50)
           );
         },
         message:
-          "You can only specify up to 5 skills, each up to 50 characters long.",
+          "You can only specify up to 30 skills, each up to 50 characters long.",
       },
     },
     experience: [experienceSchema],
