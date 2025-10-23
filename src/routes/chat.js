@@ -3,27 +3,6 @@ const { UserAuth } = require("../middlewares/auth");
 const Chat = require("../models/chat");
 const chatRouter = express.Router();
 
-chatRouter.get("/chat/:targetUserId", UserAuth, async (req, res) => {
-  try {
-    const { targetUserId } = req.params;
-    const userId = req.user._id;
-
-    let chat = await Chat.findOne({
-      participants: { $all: [userId, targetUserId] },
-    });
-    if (!chat) {
-      chat = new Chat({
-        participants: [userId, targetUserId],
-        message: [],
-      });
-    }
-    await chat.save();
-    res.json(chat);
-  } catch (error) {
-    console.log(error);
-  }
-});
-
 chatRouter.get("/chat/conversations", UserAuth, async (req, res) => {
   try {
     const userId = req.user._id;
@@ -50,6 +29,27 @@ chatRouter.get("/chat/conversations", UserAuth, async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Failed to fetch conversations" });
+  }
+});
+
+chatRouter.get("/chat/:targetUserId", UserAuth, async (req, res) => {
+  try {
+    const { targetUserId } = req.params;
+    const userId = req.user._id;
+
+    let chat = await Chat.findOne({
+      participants: { $all: [userId, targetUserId] },
+    });
+    if (!chat) {
+      chat = new Chat({
+        participants: [userId, targetUserId],
+        message: [],
+      });
+    }
+    await chat.save();
+    res.json(chat);
+  } catch (error) {
+    console.log(error);
   }
 });
 
