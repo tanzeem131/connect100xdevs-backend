@@ -24,4 +24,33 @@ chatRouter.get("/chat/:targetUserId", UserAuth, async (req, res) => {
   }
 });
 
+chatRouter.get("/chat/conversations", UserAuth, async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const chats = await Chat.find({
+      participants: userId,
+    })
+      .populate("participants", "firstName lastName photoUrl age gender")
+      .sort({ updatedAt: -1 });
+
+    const formattedChats = chats.map((chat) => {
+      const otherUser = chat.participants.find(
+        (participant) => participant._id.toString() !== userId.toString()
+      );
+      return {
+        _id: chat._id,
+        otherUser,
+        message: chat.message,
+        updatedAt: chat.updatedAt,
+      };
+    });
+
+    res.json(formattedChats);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Failed to fetch conversations" });
+  }
+});
+
 module.exports = chatRouter;
